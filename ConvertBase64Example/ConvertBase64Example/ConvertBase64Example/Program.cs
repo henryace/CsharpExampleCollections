@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 
 namespace ConvertBase64Example
 {
@@ -10,36 +11,24 @@ namespace ConvertBase64Example
         private static void Main(string[] args)
         {
             var apiKey = "test";
-            string apiKeyBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(apiKey));
-
-            Console.WriteLine("Hello World!");
+            string apiKeyBase64 = "testKeyBase64";
 
             // example string for using JSON string
-            string temp =
-                @"{""test"":""test""}";
+            var json = System.IO.File.ReadAllText(@"C:\test1.json");
 
-            var contentMD5 = AuthorizationHelper.ToBase64MD5(temp);
+            var json2 = System.IO.File.ReadAllText(@"C:\test2.json");
 
-            using (var client = new System.Net.Http.HttpClient())
-            {
-                // set request headers
-                client.DefaultRequestHeaders.Clear();
+            var json3 = System.IO.File.ReadAllText(@"C:\test3.json");
 
-                // custom Authorization should use TryAddWithoutValidation method
-                client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", "authorization");
+            //string body = JsonSerializer.Serialize(request);
+            var contentMD5 = AuthorizationHelper.ToBase64MD5(json);
+            var contentMD52 = AuthorizationHelper.ToBase64MD5(json2);
+            var contentMD53 = AuthorizationHelper.ToBase64MD5(json3);
 
-                // TryAddWithoutValidation("Content-MD5", contentMD5) will return false in ASP.NET MVC5
-                client.DefaultRequestHeaders.TryAddWithoutValidation("Content-MD5", contentMD5);
+            Console.WriteLine($"{contentMD5}");
+            Console.WriteLine($"{contentMD52}");
+            Console.WriteLine($"{contentMD53}");
 
-                // Construct an HttpContent from the data
-                HttpContent httpContent = new StringContent(temp);
-
-                // set Content-MD5 in ASP.NET MVC5
-                httpContent.Headers.ContentMD5 = Convert.FromBase64String(contentMD5);
-
-                // Example for convert base64 string
-                ConvertRecoverBase64StringExample(contentMD5);
-            }
         }
 
         private static void ConvertRecoverBase64StringExample(string contentMD5)
@@ -101,6 +90,23 @@ namespace ConvertBase64Example
         {
             var md5Crp = new MD5CryptoServiceProvider();
             return md5Crp.ComputeHash(data);
+        }
+
+        public static string RecoverBase64StringExample(string contentMD5)
+        {
+            //// corect steps
+            //string a = contentMD5;
+            //byte[] bytes = System.Text.Encoding.GetEncoding("utf-8").GetBytes(a);
+
+            ////編成 Base64 字串
+            //string b = Convert.ToBase64String(bytes);
+
+            var bb = Convert.FromBase64String(contentMD5);
+
+            //從 Base64 字串還原
+            string c = System.Text.Encoding.GetEncoding("utf-8").GetString(bb);
+
+            return c;
         }
 
         /// <summary>
