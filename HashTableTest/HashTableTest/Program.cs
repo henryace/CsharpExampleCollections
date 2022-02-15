@@ -4,6 +4,8 @@ using System.Collections;
 Console.WriteLine("Hello, World!");
 hashTableTest ht = new hashTableTest();
 // ht.hashTable();
+
+// https://www.dotblogs.com.tw/chichiBlog/2018/10/16/172518
 // 碰到的問題 --  集合已修改列舉作業可能尚未執行
 ht.hashTableNewStudent();
 Console.ReadLine();
